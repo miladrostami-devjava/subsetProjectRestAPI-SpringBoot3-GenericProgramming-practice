@@ -9,41 +9,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service
-public class SubsetServiceImpl implements SubsetService {
-    private final Map<Integer, List<List<Integer>>> subSetsCache = new HashMap<>();
 
+@Service
+public class SubsetServiceImpl<T> implements SubsetService<SubsetRequest<T>, SubsetResponse<T>> {
+
+    private final Map<Integer, List<List<T>>> subsetsCache = new HashMap<>();
 
     @Override
-    public SubsetResponse calculateSubset(SubsetRequest subsetRequest) {
-        List<Integer> inputSubset = subsetRequest.getSubSetInput();
-        int key = inputSubset.hashCode();
+    public SubsetResponse<T> calculateSubset(SubsetRequest<T> subsetRequest) {
+        List<T> inputSet = subsetRequest.getInputSet();
+        if (inputSet == null){
+           throw new IllegalArgumentException("Input subset can not be null!");
+        }
+        int key = inputSet.hashCode();
 
-        if (subSetsCache.containsKey(key)) {
-            return new SubsetResponse(subSetsCache.get(key));
+        if (subsetsCache.containsKey(key)) {
+            return new SubsetResponse<>(subsetsCache.get(key));
         }
 
-        List<List<Integer>> result = generateSubsets(inputSubset);
-        subSetsCache.put(key, result);
-        return new SubsetResponse(result);
+        List<List<T>> result = generateSubsets(inputSet);
+
+        subsetsCache.put(key, result);
+
+        return new SubsetResponse<>(result);
     }
 
-    private List<List<Integer>> generateSubsets(List<Integer> inputSubset) {
-        List<List<Integer>> subsets = new ArrayList<>();
-        int inputSize = inputSubset.size();
-        int numberOfSubsets = 1 << inputSize;
+    private List<List<T>> generateSubsets(List<T> inputSet) {
+        List<List<T>> subsets = new ArrayList<>();
+        int n = inputSet.size();
+        int numberOfSubsets = 1 << n;
 
         for (int i = 0; i < numberOfSubsets; i++) {
-            List<Integer> subset = new ArrayList<>();
-            for (int j = 0; j < inputSize; j++) {
+            List<T> subset = new ArrayList<>();
+            for (int j = 0; j < n; j++) {
                 if ((i & (1 << j)) != 0) {
-                    subset.add(inputSubset.get(j));
+                    subset.add(inputSet.get(j));
                 }
             }
             subsets.add(subset);
         }
-
         return subsets;
     }
-
 }

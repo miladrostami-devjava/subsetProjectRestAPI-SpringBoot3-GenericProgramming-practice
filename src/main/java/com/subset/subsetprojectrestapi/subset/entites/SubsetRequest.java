@@ -2,21 +2,21 @@ package com.subset.subsetprojectrestapi.subset.entites;
 
 import java.util.List;
 
-public class SubsetRequest {
-    private List<Integer> subSetInput;
+public class SubsetRequest<T> {
 
-    public SubsetRequest() {
+    private List<T> inputSet;
+
+    public SubsetRequest() {}
+
+    public SubsetRequest(List<T> inputSet) {
+        this.inputSet = inputSet;
     }
 
-    public SubsetRequest(List<Integer> subSetInput) {
-        this.subSetInput = subSetInput;
+    public List<T> getInputSet() {
+        return inputSet;
     }
 
-    public List<Integer> getSubSetInput() {
-        return subSetInput;
-    }
-
-    public void setSubSetInput(List<Integer> subSetInput) {
-        this.subSetInput = subSetInput;
+    public void setInputSet(List<T> inputSet) {
+        this.inputSet = inputSet;
     }
 }
